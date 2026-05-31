@@ -11,12 +11,14 @@ tags:
 ## Systolic Array란?
 Systolic Array는 PE(Processing Element)들이 격자 형태로 배열되어, 데이터를 옆으로 흘리면서 연산하는 구조입니다. CPU/GPU와 달리 메모리 접근 없이 PE 간 직접 데이터를 전달해 메모리 병목을 줄입니다.
 
-![585](assets/images/systolic_array_4x4_dataflow%201.svg)
+![](assets/images/Systolic_Array_4x4.png)
+
 
 ## GEMM과의 관계 
 Systolic Array의 핵심 목적은 행렬 곱셈(GEMM) 가속입니다. 
 
 $$C = A \times B$$ 
+
 - A: 입력 행렬 (왼쪽에서 오른쪽으로 흐름)
 - B: 가중치 행렬 (위에서 아래로 흐름) 
 - C: 출력 행렬 (각 PE에 누적)
