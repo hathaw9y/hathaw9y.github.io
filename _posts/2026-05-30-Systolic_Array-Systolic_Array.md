@@ -29,11 +29,11 @@ $$C = A \times B$$
 
 데이터를 어디에 고정하느냐에 따라 세 가지로 나뉩니다.
 
-| Dataflow          | 고정 데이터 | 특징            |
-| ----------------- | ------ | ------------- |
-| Output Stationary | 출력(C)  | 구현 단순, 부분합 누적 |
-| Weight Stationary | 가중치(B) | 가중치 재사용 극대화   |
-| Input Stationary  | 입력(A)  | 입력 재사용 극대화    |
+| Dataflow          | 고정 데이터 | 특징          |
+| ----------------- | ------ | ----------- |
+| Output Stationary | 출력(C)  | 부분합 누적      |
+| Weight Stationary | 가중치(B) | 가중치 재사용 극대화 |
+| Input Stationary  | 입력(A)  | 입력 재사용 극대화  |
 
 이 시리즈에서는 **Output Stationary**와 **Weight Stationary**를 구현합니다. 
 
@@ -41,7 +41,7 @@ $$C = A \times B$$
 
 PE 하나는 다음 연산을 수행합니다
 
-$$acc += a * b$$
+$$acc \mathrel{+}= a \times b$$
 
 - `a`: 왼쪽에서 들어온 입력값 → 오른쪽으로 전달
 - `b`: 위에서 들어온 가중치값 → 아래로 전달
