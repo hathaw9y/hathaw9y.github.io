@@ -29,6 +29,7 @@ $$C = A \times B$$
 | Output Stationary | 출력(C)  | 구현 단순, 부분합 누적 |
 | Weight Stationary | 가중치(B) | 가중치 재사용 극대화   |
 | Input Stationary  | 입력(A)  | 입력 재사용 극대화    |
+
 이 시리즈에서는 **Output Stationary**와 **Weight Stationary**를 구현합니다. 
 ## PE 동작 
 PE 하나는 다음 연산을 수행합니다
