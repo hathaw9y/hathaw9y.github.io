@@ -1,5 +1,5 @@
 ---
-title: "[Systolic Array] 0. 시작하며 - 16x16 Systolic Array 설계"
+title: "[Systolic Array] 0. 시작하며 - Systolic Array 설계"
 date: 2026-05-30 00:00:00 +0900
 categories:
   - RTL
@@ -8,11 +8,11 @@ tags:
   - SystemVerilog
   - Systolic_Array
 ---
-## 왜 Systolic Array인가?
 
-대부분의 NPU 가속기는 행렬 연산을 효율적으로 처리하기 위해 Systolic Array 구조를 사용합니다.
-Google TPU를 비롯해 상용 NPU 대부분이 이 구조를 기반으로 합니다.
-행렬 곱셈은 LLM 추론의 핵심 연산이며, Systolic Array는 데이터 재사용률을 극대화해 메모리 병목을 줄이는 데 효과적입니다.
+
+## 왜 Systolic Array인가? 
+LLM 추론의 핵심은 행렬 곱셈(GEMM)입니다. 문제는 연산 자체가 아니라 **메모리 접근 비용**입니다. DRAM에서 데이터를 한 번 읽는 에너지는 MAC 연산 하나의 수백 배에 달합니다. 즉, 아무리 빠른 연산기를 만들어도 데이터를 매번 메모리에서 가져온다면 에너지와 시간 대부분이 메모리 접근에 낭비됩니다. 
+Systolic Array는 이 문제를 PE 간 직접 데이터 전달로 해결합니다. 한 번 읽은 데이터를 옆 PE로 흘려보내며 재사용하기 때문에 메모리 접근 횟수를 극적으로 줄일 수 있습니다.
 
 ## 사전 지식
 
@@ -42,7 +42,7 @@ Output Stationary와 Weight Stationary 두 가지 dataflow를 비교합니다.
 - FPGA 프레임워크: PYNQ 
 - 툴: Vivado 2024.1
 - 언어: SystemVerilog
-- 
-## 이 글을 쓰는 이유
+ 
+## 이 글을 쓰는 이유 
 
-직접 구현하면서 Systolic Array를 FPGA 타겟으로 SystemVerilog로 구현한 레퍼런스가 거의 없어 많이 힘들었습니다. 이 시리즈가 같은 어려움을 겪는 분들께 조금이나마 도움이 되길 바랍니다.
+Systolic Array를 FPGA 타겟으로 SystemVerilog로 구현한 레퍼런스가 거의 없어 많이 힘들었습니다. 이 시리즈가 같은 어려움을 겪는 분들께 조금이나마 도움이 되길 바랍니다.
