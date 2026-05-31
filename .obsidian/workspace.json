@@ -4,11 +4,11 @@
     "type": "split",
     "children": [
       {
-        "id": "8886e622400e711b",
+        "id": "2bdf850a9e53ab4b",
         "type": "tabs",
         "children": [
           {
-            "id": "7a3d6bab26e7720c",
+            "id": "f58a0924667dc4bc",
             "type": "leaf",
             "state": {
               "type": "empty",
@@ -181,10 +181,10 @@
       "templater-obsidian:Templater": false
     }
   },
-  "active": "7a3d6bab26e7720c",
+  "active": "f58a0924667dc4bc",
   "lastOpenFiles": [
-    "_posts/2026-05-30-Systolic_Array-Systolic_Array.md",
     "_posts/2026-05-30-Systolic_Array-Introduction.md",
+    "_posts/2026-05-30-Systolic_Array-Systolic_Array.md",
     "assets/images/Systolic_Array_4x4.png",
     "README.md",
     "assets/images/systolic_array_4x4_dataflow.svg",
