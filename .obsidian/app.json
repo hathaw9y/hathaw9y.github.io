@@ -3,5 +3,6 @@
   "newFileLocation": "folder",
   "newFileFolderPath": "_posts",
   "useMarkdownLinks": true,
-  "alwaysUpdateLinks": true
+  "alwaysUpdateLinks": true,
+  "newLinkFormat": "absolute"
 }
