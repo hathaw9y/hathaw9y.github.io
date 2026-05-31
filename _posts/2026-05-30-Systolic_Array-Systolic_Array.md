@@ -11,6 +11,7 @@ tags:
 ## Systolic Array란?
 
 Systolic Array는 PE(Processing Element)들이 격자 형태로 배열되어, 데이터를 옆으로 흘리면서 연산하는 구조입니다. CPU/GPU와 달리 메모리 접근 없이 PE 간 직접 데이터를 전달해 메모리 병목을 줄입니다.
+
 ![SA](/assets/images/Systolic_Array_4x4.png)
 
 
