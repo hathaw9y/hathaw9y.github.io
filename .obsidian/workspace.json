@@ -202,6 +202,9 @@
   },
   "active": "54ac87bbb6352227",
   "lastOpenFiles": [
+    "_includes/head/custom.html",
+    "_includes/head",
+    "_includes",
     "_posts/2026-05-30-Systolic_Array-Introduction.md",
     "_posts/2026-05-30-Systolic_Array-Systolic_Array.md",
     "assets/images/systolic_array_4x4_dataflow.svg",
