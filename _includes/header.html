@@ -3,7 +3,10 @@
     <a class="site-title" href="{{ '/' | relative_url }}">{{ site.title }}</a>
     <nav class="site-nav" aria-label="Primary navigation">
       {% for item in site.data.navigation.main %}
-        <a href="{{ item.url | relative_url }}">{{ item.title }}</a>
+        <a
+          href="{{ item.url | relative_url }}"
+          {% if page.url == item.url or page.url contains item.url and item.url != "/" %}class="is-active"{% endif %}
+        >{{ item.title }}</a>
       {% endfor %}
     </nav>
   </div>
