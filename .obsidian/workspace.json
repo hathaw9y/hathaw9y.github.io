@@ -13,12 +13,12 @@
             "state": {
               "type": "markdown",
               "state": {
-                "file": "_posts/2026-05-30-Systolic_Array-Systolic_Array.md",
+                "file": "_posts/2026-05-30-Systolic_Array-Introduction.md",
                 "mode": "source",
                 "source": false
               },
               "icon": "lucide-file",
-              "title": "2026-05-30-Systolic_Array-Systolic_Array"
+              "title": "2026-05-30-Systolic_Array-Introduction"
             }
           }
         ]
@@ -187,6 +187,10 @@
   },
   "active": "f58a0924667dc4bc",
   "lastOpenFiles": [
+    "_site/hardware/rtl/Systolic_Array-Introduction/index.html",
+    "_site/hardware/rtl/Systolic_Array-Introduction",
+    "_posts/2026-05-30-Systolic_Array-Systolic_Array.md",
+    "_posts/2026-06-05.md",
     "_includes/social-icon.html",
     "_site/assets/css/style.css",
     "_site/assets/images/catppuccin_mocha-skin-archive-large.png",
@@ -198,14 +202,10 @@
     "_site/assets/js/plugins/jquery.greedy-navigation.js",
     "_site/assets/js/plugins/jquery.fitvids.js",
     "_site/assets/js/plugins/jquery.ba-throttle-debounce.js",
-    "_site/assets/js/plugins/gumshoe.js",
-    "_site/assets/js/lunr/lunr.min.js",
     "_site/무제.canvas",
     "_site/assets/images/Systolic_Array_4x4.png",
     "_site/assets/images/profile.jpg",
     "_site/README.md",
-    "_posts/무제.md",
-    "_posts/2026-05-30-Systolic_Array-Systolic_Array.md",
     "_posts/2026-05-30-Systolic_Array-Introduction.md",
     "assets/images/Systolic_Array_4x4.png",
     "README.md",

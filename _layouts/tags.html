@@ -8,7 +8,7 @@ layout: default
   {% assign tag_name = tag[0] %}
   {% assign posts = tag[1] %}
   <section class="archive-group" id="{{ tag_name | slugify }}">
-    <h2 class="archive-group__title">{{ tag_name }} <span>{{ posts | size }}</span></h2>
+    <h2 class="archive-group__title">{{ tag_name }}</h2>
     <ul class="archive-group__list">
       {% for post in posts %}
         <li>
