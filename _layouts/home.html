@@ -1,0 +1,12 @@
+---
+layout: default
+---
+
+{{ content }}
+
+<section class="post-list" aria-label="Recent posts">
+  <h1 class="archive-title">Recent Posts</h1>
+  {% for post in site.posts %}
+    {% include post-card.html post=post %}
+  {% endfor %}
+</section>

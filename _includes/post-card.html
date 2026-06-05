@@ -1,0 +1,14 @@
+<article class="post-card">
+  <h2 class="post-card__title">
+    <a href="{{ include.post.url | relative_url }}">{{ include.post.title }}</a>
+  </h2>
+  <div class="post-card__meta">
+    <time datetime="{{ include.post.date | date_to_xmlschema }}">{{ include.post.date | date: "%B %-d, %Y" }}</time>
+    {% if include.post.categories.size > 0 %}
+      <span> · {{ include.post.categories | join: " / " }}</span>
+    {% endif %}
+  </div>
+  {% if include.post.excerpt %}
+    <p class="post-card__excerpt">{{ include.post.excerpt | strip_html | truncate: 180 }}</p>
+  {% endif %}
+</article>

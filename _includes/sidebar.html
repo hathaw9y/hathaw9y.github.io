@@ -1,0 +1,79 @@
+<aside class="site-sidebar" aria-label="Sidebar">
+  <section class="author-card">
+    {% if site.author.avatar %}
+      <img class="author-card__avatar" src="{{ site.author.avatar | relative_url }}" alt="{{ site.author.name }}">
+    {% endif %}
+    <h2 class="author-card__name">{{ site.author.name }}</h2>
+    {% if site.author.bio %}
+      <p class="author-card__bio">{{ site.author.bio }}</p>
+    {% endif %}
+    {% if site.author.links %}
+      <ul class="author-links">
+        {% for link in site.author.links %}
+          <li>
+            <a href="{{ link.url }}">
+              {% include social-icon.html icon=link.icon %}
+              <span>{{ link.label }}</span>
+            </a>
+          </li>
+        {% endfor %}
+        <li>
+          {% assign email_address = site.author.email | default: site.email %}
+          <a href="{% if email_address %}mailto:{{ email_address }}{% else %}{{ '/about/' | relative_url }}{% endif %}">
+            {% include social-icon.html icon="email" %}
+            <span>Email</span>
+          </a>
+        </li>
+      </ul>
+    {% endif %}
+  </section>
+
+  <section class="sidebar-stats" aria-label="Site statistics">
+    <a href="{{ '/posts/' | relative_url }}">
+      <strong>{{ site.posts | size }}</strong>
+      <span>Posts</span>
+    </a>
+    <a href="{{ '/categories/' | relative_url }}">
+      <strong>{{ site.categories | size }}</strong>
+      <span>Categories</span>
+    </a>
+    <a href="{{ '/tags/' | relative_url }}">
+      <strong>{{ site.tags | size }}</strong>
+      <span>Tags</span>
+    </a>
+  </section>
+
+  <section class="sidebar-section sidebar-section--categories">
+    <h2 class="sidebar-section__title">Categories</h2>
+    {% if site.data.navigation.categories %}
+      <ul class="category-tree">
+        {% include category-tree.html items=site.data.navigation.categories %}
+      </ul>
+    {% endif %}
+  </section>
+
+  <section class="sidebar-section sidebar-section--recents">
+    <h2 class="sidebar-section__title">Recents</h2>
+    <ol class="recent-list">
+      {% for post in site.posts limit:5 %}
+        <li>
+          <time datetime="{{ post.date | date_to_xmlschema }}">{{ post.date | date: "%m-%d-%Y" }}</time>
+          <a href="{{ post.url | relative_url }}">{{ post.title }}</a>
+          {% if post.categories.size > 0 %}
+            <span>{{ post.categories | last }}</span>
+          {% endif %}
+        </li>
+      {% endfor %}
+    </ol>
+  </section>
+
+  <section class="sidebar-section sidebar-section--tags">
+    <h2 class="sidebar-section__title">Tags</h2>
+    <div class="tag-cloud">
+      {% assign tags = site.tags | sort %}
+      {% for tag in tags limit:18 %}
+        <a href="{{ '/tags/#' | append: tag[0] | slugify | relative_url }}">{{ tag[0] }} <span>{{ tag[1].size }}</span></a>
+      {% endfor %}
+    </div>
+  </section>
+</aside>

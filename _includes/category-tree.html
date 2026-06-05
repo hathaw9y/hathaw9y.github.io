@@ -1,0 +1,19 @@
+{% assign depth = include.depth | default: 1 %}
+{% assign next_depth = depth | plus: 1 %}
+
+{% for item in include.items %}
+  <li>
+    {% if item.children %}
+      <details{% if depth == 1 %} open{% endif %}>
+        <summary>{{ item.title }}</summary>
+        <ul>
+          {% include category-tree.html items=item.children depth=next_depth %}
+        </ul>
+      </details>
+    {% elsif item.url %}
+      <a href="{{ item.url | relative_url }}">{{ item.title }}</a>
+    {% else %}
+      <span>{{ item.title }}</span>
+    {% endif %}
+  </li>
+{% endfor %}

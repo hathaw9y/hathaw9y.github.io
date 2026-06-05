@@ -1,0 +1,14 @@
+<!doctype html>
+<html lang="{{ site.lang | default: 'ko' }}">
+  {% include head.html %}
+  <body>
+    {% include header.html %}
+    <div class="site-shell">
+      {% include sidebar.html %}
+      <main class="site-main" id="main">
+        {{ content }}
+      </main>
+    </div>
+    {% include footer.html %}
+  </body>
+</html>

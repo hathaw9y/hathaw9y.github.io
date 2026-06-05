@@ -1,0 +1,21 @@
+---
+layout: default
+---
+
+<h1 class="archive-title">{{ page.title }}</h1>
+{% assign categories = site.categories | sort %}
+{% for category in categories %}
+  {% assign category_name = category[0] %}
+  {% assign posts = category[1] %}
+  <section class="archive-group" id="{{ category_name | slugify }}">
+    <h2 class="archive-group__title">{{ category_name }}</h2>
+    <ul class="archive-group__list">
+      {% for post in posts %}
+        <li>
+          <a href="{{ post.url | relative_url }}">{{ post.title }}</a>
+          <span class="post-card__meta">{{ post.date | date: "%Y-%m-%d" }}</span>
+        </li>
+      {% endfor %}
+    </ul>
+  </section>
+{% endfor %}
