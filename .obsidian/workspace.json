@@ -187,8 +187,11 @@
   },
   "active": "f58a0924667dc4bc",
   "lastOpenFiles": [
-    "_posts/2026-05-30-Systolic_Array-Introduction.md",
+    "_includes/nav_list_items.html",
+    "_includes/nav_list.html",
+    "_posts/무제.md",
     "_posts/2026-05-30-Systolic_Array-Systolic_Array.md",
+    "_posts/2026-05-30-Systolic_Array-Introduction.md",
     "assets/images/Systolic_Array_4x4.png",
     "README.md",
     "assets/images/systolic_array_4x4_dataflow.svg",

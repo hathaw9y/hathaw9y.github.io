@@ -1,0 +1,12 @@
+{% assign nav_key = include.nav | default: include.items %}
+{% assign nav_items = site.data.navigation[nav_key] %}
+
+{% if nav_items %}
+  <nav class="nav__list">
+    <input id="ac-toc" name="accordion-toc" type="checkbox">
+    <label for="ac-toc">Toggle Menu</label>
+    <ul class="nav__items">
+      {% include nav_list_items.html items=nav_items %}
+    </ul>
+  </nav>
+{% endif %}

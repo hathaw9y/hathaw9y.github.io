@@ -13,3 +13,13 @@ table {
   }
   th { background-color: #f2f2f2; }
 }
+
+.sidebar .nav__sub-title + ul ul {
+  margin-top: 0.25rem;
+  padding-left: 1rem;
+  border-left: 1px solid #f2f3f3;
+}
+
+.sidebar .nav__sub-title + ul ul a {
+  font-size: 0.85em;
+}
