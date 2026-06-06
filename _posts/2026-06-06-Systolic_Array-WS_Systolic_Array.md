@@ -1,6 +1,6 @@
 ---
 title: "[Systolic Array] 3. WS Systolic Array 설계"
-date: 2026-06-06
+date: 2026-06-06 10:00:00 +0900
 categories:
   - Hardware
   - RTL

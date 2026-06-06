@@ -1,6 +1,6 @@
 ---
 title: "[Systolic Array] 5. BRAM 읽고 쓰기"
-date: 2026-06-06 17:34
+date: 2026-06-06 12:00:00 +0900
 categories:
   - Hardware
   - RTL

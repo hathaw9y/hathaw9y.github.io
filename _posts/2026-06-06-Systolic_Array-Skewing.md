@@ -1,6 +1,6 @@
 ---
 title: "[Systolic Array] 4. Skewing 구현"
-date: 2026-06-06 15:56
+date: 2026-06-06 11:00:00 +0900
 categories:
   - Hardware
   - RTL

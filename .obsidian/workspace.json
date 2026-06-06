@@ -13,12 +13,12 @@
             "state": {
               "type": "markdown",
               "state": {
-                "file": "_posts/2026-06-06-Systolic_Array-BRAM_TO_Systolic_Array.md",
+                "file": "_posts/2026-06-06-Systolic_Array-WS_Systolic_Array.md",
                 "mode": "source",
                 "source": false
               },
               "icon": "lucide-file",
-              "title": "2026-06-06-Systolic_Array-BRAM_TO_Systolic_Array"
+              "title": "2026-06-06-Systolic_Array-WS_Systolic_Array"
             }
           }
         ]
@@ -187,6 +187,13 @@
   },
   "active": "b0a5766da2e23568",
   "lastOpenFiles": [
+    "_posts/2026-06-06-Systolic_Array-Skewing.md",
+    "_posts/2026-06-06-Systolic_Array-BRAM_TO_Systolic_Array.md",
+    "_posts/2026-06-05-Systolic_Array-OS_Systolic_Array.md",
+    "_posts/2026-05-30-Systolic_Array-Systolic_Array.md",
+    "_posts/2026-05-30-Systolic_Array-Introduction.md",
+    "_posts/2026-06-06-Systolic_Array-WS_Systolic_Array.md",
+    "_templates/post-template.md.md",
     "_site/hardware/rtl/systolic array/Systolic_Array-BRAM_TO_Systolic_Array/index.html",
     "_site/hardware/rtl/systolic array/Systolic_Array-BRAM_TO_Systolic_Array",
     "_site/hardware/Systolic_Array-BRAM_TO_Systolic_Array/index.html",
@@ -197,14 +204,7 @@
     "_site/assets/vendor/wavedrom",
     "_site/assets/vendor",
     "assets/vendor/wavedrom/default.js",
-    "assets/vendor/wavedrom",
-    "_posts/2026-06-06-Systolic_Array-Skewing.md",
-    "_posts/2026-06-06-Systolic_Array-BRAM_TO_Systolic_Array.md",
-    "_posts/2026-06-06-Systolic_Array-WS_Systolic_Array.md",
-    "_posts/2026-06-05-Systolic_Array-OS_Systolic_Array.md",
     "_posts/2026-06-06-Systolic_Array-Skewing_.md",
-    "_templates/post-template.md.md",
-    "_posts/2026-05-30-Systolic_Array-Introduction.md",
     "_posts/2026-06-06.md",
     "_site/assets/images/Pasted image 20260606155222.png",
     "assets/images/Pasted image 20260606155222.png",
@@ -216,7 +216,6 @@
     "assets/images/Pasted image 20260606134247.png",
     "_site/assets/images/Pasted image 20260606134037.png",
     "assets/images/Pasted image 20260606134037.png",
-    "_posts/2026-05-30-Systolic_Array-Systolic_Array.md",
     "_posts/2026-06-05 Systolic_Array-OS_Systolic_Array.md",
     "_site/무제.canvas",
     "_site/README.md",
