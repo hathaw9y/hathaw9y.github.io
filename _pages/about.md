@@ -21,6 +21,24 @@ title: "About"
 
 현재는 Systolic Array를 중심으로 PE 설계, dataflow, RTL 구현, FPGA 환경에서의 검증 흐름을 정리하고 있습니다.
 
+## Current Focus
+
+최근에는 LLM 추론에서 반복적으로 등장하는 행렬 연산을 하드웨어 관점에서 어떻게 효율적으로 처리할 수 있는지에 관심이 있습니다. 특히 Systolic Array 구조, dataflow 선택, PE 내부 누산 방식, 메모리 접근 패턴을 중심으로 공부하고 있습니다.
+
+## What You Can Expect
+
+이 블로그에는 완성된 결과만 올리기보다, 구현 과정에서 생긴 시행착오와 판단 기준을 함께 남기려고 합니다.
+
+- 논문이나 자료를 읽고 이해한 내용
+- RTL 구현 중 마주친 설계 선택지
+- 시뮬레이션과 디버깅 과정
+- FPGA 환경에서의 검증 기록
+- LLM inference 최적화와 quantization 관련 메모
+
+## Contact
+
+가벼운 질문이나 의견은 GitHub 또는 Instagram으로 남겨주셔도 좋습니다. 기술적인 내용은 가능하면 이 블로그의 글이나 GitHub 기록으로 이어질 수 있게 정리해보려 합니다.
+
 ## Links
 
 - GitHub: [hathaw9y](https://github.com/hathaw9y)

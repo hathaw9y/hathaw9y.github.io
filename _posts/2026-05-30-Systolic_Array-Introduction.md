@@ -1,5 +1,5 @@
 ---
-title: 0. 시작하며 - Systolic Array 설계
+title: "[Systolic Array] 0. 시작하며 - Systolic Array 설계"
 date: 2026-05-30 00:00:00 +0900
 categories:
   - Hardware
