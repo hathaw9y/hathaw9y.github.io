@@ -1,9 +1,10 @@
 ---
-title: "[Systolic Array] 0. 시작하며 - Systolic Array 설계"
+title: 시작하며 - Systolic Array 설계
 date: 2026-05-30 00:00:00 +0900
-categories:
-  - Hardware
-  - RTL
+series: Systolic Array
+series_order: 0
+categories: Hardware
+subcategory: RTL
 tags:
   - SystemVerilog
   - Systolic_Array
@@ -14,7 +15,7 @@ LLM 추론의 핵심 연산은 행렬 곱셈(GEMM)이다. 행렬 곱셈은 MAC(M
 
 하지만 실제 병목은 연산 자체보다 **메모리 접근 비용**에 있는 경우가 많다. DRAM에서 데이터를 한 번 읽는 에너지는 MAC 연산 하나보다 훨씬 크다. 즉, 아무리 빠른 연산기를 만들어도 데이터를 매번 메모리에서 가져온다면 에너지와 시간 대부분이 데이터 이동에 낭비된다.
 
-Systolic Array는 이 문제를 PE(Processing Element) 간 직접 데이터 전달로 줄인다. 한 번 읽은 데이터를 옆 PE로 흘려보내며 재사용하기 때문에 메모리 접근 횟수를 줄이고, 여러 PE가 같은 리듬으로 동시에 연산할 수 있다.
+Systolic Array는 이 문제를 PE(Processing Element) 간 직접 데이터 전달로 줄인다. 한 번 읽은 데이터를 옆 PE로 흘려보내며 재사용하기 때문에 메모리 접근 횟수를 줄이고, 여러 PE가 같은 타이밍으로 동시에 연산할 수 있다.
 
 이 시리즈에서는 먼저 Systolic Array가 어떤 문제를 해결하는지 큰 그림을 잡고, 이후 PE 하나의 동작부터 16×16 배열 구현까지 차례대로 내려가며 정리한다.
 

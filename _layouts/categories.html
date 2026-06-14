@@ -7,15 +7,20 @@ layout: default
 {% for category in categories %}
   {% assign category_name = category[0] %}
   {% assign posts = category[1] %}
+  {% assign subcategories = posts | group_by: "subcategory" | sort: "name" %}
   <section class="archive-group" id="{{ category_name | slugify }}">
     <h2 class="archive-group__title">{{ category_name }}</h2>
-    <ul class="archive-group__list">
-      {% for post in posts %}
-        <li>
-          <a href="{{ post.url | relative_url }}">{{ post.title }}</a>
-          <span class="post-card__meta">{{ post.date | date: "%Y-%m-%d" }}</span>
-        </li>
-      {% endfor %}
-    </ul>
+    {% for subcategory in subcategories %}
+      {% assign subcategory_name = subcategory.name %}
+      <h3 class="archive-group__subtitle" id="{{ category_name | append: '-' | append: subcategory_name | slugify }}">{{ subcategory_name | default: "Uncategorized" }}</h3>
+      <ul class="archive-group__list">
+        {% for post in subcategory.items %}
+          <li>
+            <a href="{{ post.url | relative_url }}">{{ post.title }}</a>
+            <span class="post-card__meta">{{ post.date | date: "%Y-%m-%d" }}</span>
+          </li>
+        {% endfor %}
+      </ul>
+    {% endfor %}
   </section>
 {% endfor %}

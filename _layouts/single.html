@@ -7,12 +7,17 @@ layout: default
     <header class="post-header">
       <h1 class="post-title">{{ page.title }}</h1>
       <div class="post-meta">
+        {% assign post_category = page.categories | first %}
         <time datetime="{{ page.date | date_to_xmlschema }}">{{ page.date | date: "%B %-d, %Y" }}</time>
-        {% if page.categories.size > 0 %}
-          <span> · {{ page.categories | join: " / " }}</span>
+        {% if page.series %}
+          <span> · Series: {{ page.series }}</span>
+        {% endif %}
+        {% if post_category %}
+          <span> · {{ post_category }}{% if page.subcategory %} / {{ page.subcategory }}{% endif %}</span>
         {% endif %}
       </div>
     </header>
+    {% include series-toc.html %}
     <div class="post-content">
       {{ content }}
     </div>

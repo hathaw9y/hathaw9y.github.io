@@ -1,0 +1,27 @@
+{% assign series_posts = site.posts | where: "series", page.series | sort: "series_order" %}
+
+{% if page.series and series_posts.size > 1 %}
+  <details class="series-toc">
+    <summary class="series-toc__header">
+      <span id="series-toc-title" class="series-toc__title">{{ page.series }}</span>
+      <span class="series-toc__count">{{ series_posts.size }} posts</span>
+    </summary>
+    <ol class="series-toc__list">
+      {% for series_post in series_posts %}
+        <li class="series-toc__item{% if series_post.url == page.url %} is-current{% endif %}">
+          {% if series_post.url == page.url %}
+            <span class="series-toc__link" aria-current="page">
+              <span class="series-toc__number">{{ series_post.series_order | default: forloop.index }}</span>
+              <span class="series-toc__post-title">{{ series_post.title }}</span>
+            </span>
+          {% else %}
+            <a class="series-toc__link" href="{{ series_post.url | relative_url }}">
+              <span class="series-toc__number">{{ series_post.series_order | default: forloop.index }}</span>
+              <span class="series-toc__post-title">{{ series_post.title }}</span>
+            </a>
+          {% endif %}
+        </li>
+      {% endfor %}
+    </ol>
+  </details>
+{% endif %}

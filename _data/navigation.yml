@@ -10,8 +10,7 @@ main:
 
 categories:
   - title: "Hardware"
+    url: /categories/#hardware
     children:
       - title: "RTL"
-        children:
-          - title: "Systolic Array"
-            url: /categories/#systolic-array
+        url: /categories/#hardware-rtl

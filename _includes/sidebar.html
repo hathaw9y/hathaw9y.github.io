@@ -59,8 +59,12 @@
         <li>
           <time datetime="{{ post.date | date_to_xmlschema }}">{{ post.date | date: "%m-%d-%Y" }}</time>
           <a href="{{ post.url | relative_url }}">{{ post.title }}</a>
-          {% if post.categories.size > 0 %}
-            <span>{{ post.categories | last }}</span>
+          {% if post.series %}
+            <span>{{ post.series }}</span>
+          {% elsif post.subcategory %}
+            <span>{{ post.subcategory }}</span>
+          {% elsif post.categories.size > 0 %}
+            <span>{{ post.categories | first }}</span>
           {% endif %}
         </li>
       {% endfor %}

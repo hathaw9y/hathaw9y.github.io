@@ -3,9 +3,13 @@
     <a href="{{ include.post.url | relative_url }}">{{ include.post.title }}</a>
   </h2>
   <div class="post-card__meta">
+    {% assign post_category = include.post.categories | first %}
     <time datetime="{{ include.post.date | date_to_xmlschema }}">{{ include.post.date | date: "%B %-d, %Y" }}</time>
-    {% if include.post.categories.size > 0 %}
-      <span> · {{ include.post.categories | join: " / " }}</span>
+    {% if include.post.series %}
+      <span> · Series: {{ include.post.series }}</span>
+    {% endif %}
+    {% if post_category %}
+      <span> · {{ post_category }}{% if include.post.subcategory %} / {{ include.post.subcategory }}{% endif %}</span>
     {% endif %}
   </div>
   {% if include.post.excerpt %}
