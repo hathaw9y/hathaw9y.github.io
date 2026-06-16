@@ -62,6 +62,11 @@ $$acc \mathrel{+}= a \times b$$
 
 PE 자체는 단순하다. 어려운 부분은 이 단순한 PE를 배열로 연결했을 때, 각 cycle에 올바른 `a`와 `b`가 같은 PE에서 만나도록 timing을 맞추는 것이다.
 
+FPGA에서는 이 timing이 곧 회로 구조가 된다.
+PE 사이에 register를 하나 두면 데이터는 한 칸 이동하는 데 1 cycle이 걸린다.
+따라서 Systolic Array 설계는 "몇 개의 곱셈기를 둘 것인가"뿐 아니라, "각 cycle에 어느 PE가 어떤 데이터를 보고 있는가"를 맞추는 문제다.
+이 관점이 뒤에서 skewing, BRAM read latency, FSM drain cycle을 계산하는 기준이 된다.
+
 ## Output Stationary vs Weight Stationary 
 
 두 방식의 차이는 **acc를 어디에 두느냐**이다.
@@ -83,6 +88,10 @@ PE 자체는 단순하다. 어려운 부분은 이 단순한 PE를 배열로 연
 ![](/assets/images/Pasted%20image%2020260613123049.png)
 
 위 그림은 Systolic Array를 단독 연산 블록이 아니라, 실제 SoC 안에서 어떻게 사용되는지 나타낸 전체 구조다. 크게 PS(Processing System)와 PL(Programmable Logic) 영역으로 나눌 수 있다. PS에는 CPU와 DDR이 있고, PL에는 Controller, DMA Engine, BRAM, Systolic Array Engine이 배치된다.
+
+여기서 중요한 점은 Systolic Array가 DDR을 직접 읽지 않는다는 것이다.
+FPGA 내부 계산 코어는 보통 가까운 BRAM이나 stream interface를 통해 데이터를 받는다.
+DDR과 PL 내부 buffer 사이의 큰 데이터 이동은 DMA가 담당하고, 계산 코어는 BRAM에 이미 정렬되어 있는 데이터를 정해진 cycle에 읽는 구조로 설계한다.
 
 빨간색 화살표는 제어 경로를 의미한다. 
 1. CPU는 Controller의 register를 설정하여 연산 크기, 시작 주소, 동작 모드 등을 전달하고

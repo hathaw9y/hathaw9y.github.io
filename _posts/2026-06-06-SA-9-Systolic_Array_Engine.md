@@ -36,6 +36,10 @@ Engine은 외부에서 보면 단순하다.
 반대로 Engine 내부에서는 여러 모듈이 서로 valid/data/address 신호를 주고받는다.
 즉 Engine의 역할은 **외부 Controller와 내부 compute datapath 사이의 경계**를 만드는 것이다.
 
+FPGA 설계에서 이 경계는 중요하다.
+하위 모듈을 개별로 검증할 때는 내부 wire를 직접 볼 수 있지만, 실제 Block Design이나 상위 wrapper에서는 Engine port만 보인다.
+따라서 Engine은 내부 timing을 숨기고, 외부에는 start/done, size/base address, BRAM port만 노출하는 wrapper 역할을 해야 한다.
+
 이 시리즈 전체를 기준으로 보면 설계는 Top-Down으로 시작했다.
 먼저 Engine이 어떤 역할을 해야 하는지 정하고, 그 안을 FSM, Loader, Array, Storer로 나누었다.
 구현은 반대로 Bottom-Up으로 진행했다.
@@ -63,6 +67,10 @@ $$C_{M \times N} = A_{M \times K} \times B_{K \times N}$$
 따라서 FSM은 이 값을 기준으로 tile 개수와 edge tile의 valid mask를 계산한다.
 base address는 각 행렬이 BRAM에서 시작하는 위치다.
 Engine 내부에서는 이 base address에 현재 tile index를 더해 실제 BRAM 주소를 만든다.
+
+여기서 base address는 byte address가 아니라 BRAM word address다.
+예를 들어 Activation BRAM이 128bit width라면 address 1은 1 byte 뒤가 아니라 다음 128bit word를 의미한다.
+이 기준은 Memory Layout, BRAM IP 설정, DMA adapter가 모두 공유해야 한다.
 
 ## OS Engine
 
@@ -178,6 +186,7 @@ FSM은 `CLEAR` 상태에서 이 신호를 1 cycle 동안 assert한다.
 OS Array의 출력은 `array_acc_w[ROWS][COLS]` 형태다.
 FSM은 이 중 한 column씩 선택해서 `storer_data_w[ROWS]`로 만든다.
 즉 BRAM_C에는 한 주소당 `ROWS`개 output value가 packed되어 저장된다.
+`ROWS = 16`, `ACC_W = 32`이면 OS Accumulator BRAM write width는 `ROWS * ACC_W = 512bit`다.
 
 ```verilog
 bram_storer #(
@@ -248,6 +257,8 @@ bram_loader #(
 `systolic_array_ws`의 출력은 한 번에 `COLS`개 partial sum이다.
 첫 번째 K tile이면 이 값을 그대로 저장하면 된다.
 하지만 두 번째 K tile부터는 BRAM_C에 저장되어 있던 기존 partial sum을 읽어와야 한다.
+`COLS = 16`, `ACC_W = 32`이면 WS Accumulator BRAM read/write width도 `COLS * ACC_W = 512bit`다.
+OS와 같은 512bit 폭을 쓰더라도, OS는 column vector를 저장하고 WS는 row vector를 저장한다는 점이 다르다.
 
 ```verilog
 accumulator #(

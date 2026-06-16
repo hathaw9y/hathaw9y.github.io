@@ -11,6 +11,10 @@ tags:
 ---
 ## Memory Layout
 
+FPGA에서 memory layout은 단순한 배열 저장 순서가 아니다.
+BRAM은 byte 단위 배열처럼 보이지만, 실제 Engine은 한 주소에서 `ROWS`개 activation이나 `COLS`개 weight가 pack된 word를 한 번에 읽는다.
+따라서 software가 DDR buffer를 준비하는 순서, DMA/adapter가 BRAM에 쓰는 순서, FSM이 BRAM 주소를 읽는 순서가 모두 같아야 한다.
+
 ### Tiling
 
 Systolic Array는 전체 행렬을 한 번에 계산하지 않고 tile 단위로 행렬을 처리한다.
@@ -100,6 +104,28 @@ OS에서 Weight는 `n_tile`을 기준으로 저장하고, 각 `n_tile` 내부에
 ```text
 B_addr = weight_base + n_tile * K + k
 ```
+
+## OS Accumulator Memory Layout
+
+OS에서는 `ROWS x COLS` output tile이 PE 내부 accumulator에 모두 만들어진 뒤 BRAM에 저장된다.
+저장할 때는 tile 안의 column을 하나 선택하고, 그 column에 해당하는 `ROWS`개 output을 한 word로 pack한다.
+
+```text
+C_addr = acc_base + (m_tile * n_tiles + n_tile) * COLS + col
+```
+
+한 주소의 의미는 다음과 같다.
+
+```text
+BRAM_C[C_addr] =
+  C[m_base + 0][n_base + col],
+  C[m_base + 1][n_base + col],
+  ...,
+  C[m_base + ROWS - 1][n_base + col]
+```
+
+즉 OS Accumulator BRAM에서는 한 word가 output column vector다.
+`ROWS = 16`, `ACC_W = 32`이면 한 word width는 `16 * 32 = 512bit`가 된다.
 
 ## WS Tiling Order
 
@@ -205,3 +231,29 @@ Weight 메모리 레이아웃은 기존 OS Memory Layout과 동일하다.
 ```text
 B_addr = weight_base + n_tile * K + k
 ```
+
+## WS Accumulator Memory Layout
+
+WS에서는 OS처럼 `ROWS x COLS` output tile 전체가 한 번에 PE 내부에 남지 않는다.
+현재 구현의 WS array는 한 번에 output row 하나와 `COLS`개 column 결과를 만든다.
+K tile이 여러 개이면 이 결과를 Accumulator BRAM에 저장해 두었다가 다음 K tile에서 다시 읽어 누적한다.
+
+따라서 WS Accumulator BRAM의 주소식은 다음과 같다.
+
+```text
+C_addr = acc_base + m_idx * n_tiles + n_tile
+```
+
+한 주소의 의미는 다음과 같다.
+
+```text
+BRAM_C[C_addr] =
+  C[m_idx][n_base + 0],
+  C[m_idx][n_base + 1],
+  ...,
+  C[m_idx][n_base + COLS - 1]
+```
+
+즉 WS Accumulator BRAM에서는 한 word가 output row vector다.
+`COLS = 16`, `ACC_W = 32`이면 이 역시 `16 * 32 = 512bit`가 된다.
+OS와 WS가 둘 다 512bit Accumulator BRAM을 쓸 수 있더라도, 한 주소가 의미하는 vector 방향은 서로 다르다.

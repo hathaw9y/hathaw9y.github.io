@@ -26,18 +26,22 @@ tags:
 - 결과 tile을 column 단위로 저장
 - 마지막 tile까지 끝나면 `done_o` pulse 출력
 
+여기서 FSM은 software의 `for` loop와 다르다.
+`m_tile_idx_r`, `n_tile_idx_r`, `k_cnt` 같은 counter들은 register이고, 각 상태에서 어떤 enable/address/valid pulse를 낼지가 하드웨어로 합성된다.
+즉 이 글의 핵심은 GEMM loop를 RTL에서 cycle 단위 제어 신호로 바꾸는 것이다.
+
 ## 전체 구조
 
 ```
 BRAM_A (act)    -> bram_loader ┐
-                               ├-> gemm_fsm_os -> systolic_array_os -> bram_storer -> BRAM_C (acc)
+                               ├-> systolic_array_fsm_os -> systolic_array_os -> bram_storer -> BRAM_C (acc)
 BRAM_B (weight) -> bram_loader ┘
 ```
 
 | 모듈 | 역할 |
 |---|---|
 | `bram_loader` | BRAM에서 A/B vector word 읽기 |
-| `gemm_fsm_os` | tile 순회, 주소 생성, valid masking, 상태 제어 |
+| `systolic_array_fsm_os` | tile 순회, 주소 생성, valid masking, 상태 제어 |
 | `systolic_array_os` | Output Stationary 방식으로 MAC 수행 |
 | `bram_storer` | 계산된 C tile을 BRAM에 저장 |
 
@@ -58,7 +62,7 @@ IDLE -> CLEAR -> COMPUTE -> DRAIN -> STORE -> DONE
 
 ### 포트 구성
 
-`gemm_fsm_os`는 start_i와 done_o로 시작, 종료를 알리고, 전체 GEMM 크기와 base address를 입력으로 받는다.
+`systolic_array_fsm_os`는 start_i와 done_o로 시작, 종료를 알리고, 전체 GEMM 크기와 base address를 입력으로 받는다.
 
 ```verilog
 input  logic                start_i,
@@ -201,6 +205,9 @@ $$t_{drain} = ROWS + COLS - 2 = 30 \text{ cycles}$$
 ```verilog
 localparam int DRAIN_LAST = ROWS + COLS - 2;
 ```
+
+이 대기 cycle은 simulation에서 "입력은 끝났는데 결과가 아직 PE 내부에 남아 있는" 구간이다.
+FPGA에서는 pipeline 내부 register에 남아 있는 데이터를 밖으로 밀어내는 시간이 필요하므로, compute enable을 끈 직후 바로 store하면 마지막 column/row 결과를 놓칠 수 있다.
 
 `drain_cnt == DRAIN_LAST_W`가 되면 `STORE`로 이동한다.
 

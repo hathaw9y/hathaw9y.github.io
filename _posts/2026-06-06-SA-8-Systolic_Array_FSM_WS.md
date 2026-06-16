@@ -24,6 +24,10 @@ WS FSM의 핵심은 세 가지다.
 즉 OS처럼 `ROWS x COLS` output tile 전체가 한 번에 PE 내부에 남는 구조가 아니다.
 WS에서는 `m_idx` 하나와 `n_tile_idx` 하나를 기준으로 `COLS`개 결과를 만들고, K tile을 바꿔가며 partial sum을 누적한다.
 
+FPGA 관점에서 WS FSM이 복잡한 이유는 memory read와 compute가 같은 cycle에 즉시 끝나지 않기 때문이다.
+BRAM read에는 latency가 있고, weight는 PE chain 안으로 여러 cycle에 걸쳐 밀려 들어가며, array output도 valid가 내려올 때까지 기다려야 한다.
+따라서 software처럼 `load; compute; add; store`를 한 줄씩 실행하는 것이 아니라, 각 단계가 끝났다는 valid pulse를 기준으로 다음 상태로 넘어가야 한다.
+
 ## 전체 구조
 
 ```verilog
@@ -122,6 +126,10 @@ weight는 PE array 내부로 한 cycle씩 밀려 들어간다.
 먼저 넣은 weight는 아래쪽 row로 이동하고, 마지막에 넣은 weight는 위쪽 row에 남는다.
 따라서 최종적으로 각 row의 PE가 올바른 weight를 잡도록 하려면 BRAM에서는 block 내부를 역순으로 읽어야 한다.
 
+이 부분은 WS 설계에서 가장 실수하기 쉽다.
+메모리에 저장된 순서와 PE에 최종적으로 고정되어야 하는 위치가 같아 보이더라도, 중간에 register chain을 통과하면서 위치가 한 cycle씩 밀린다.
+그래서 FSM은 단순히 주소를 증가시키는 것이 아니라, PE 내부 이동 방향까지 고려해 읽는 순서를 정해야 한다.
+
 ## Activation Read
 
 weight load가 끝나면 현재 output row에 대한 activation vector를 읽는다.
@@ -170,6 +178,10 @@ end
 ```
 
 하지만 두 번째 K tile부터는 이전 partial sum을 BRAM_C에서 읽어야 한다.
+
+이 구조에서는 Accumulator BRAM이 단순 output 저장소가 아니라 partial sum buffer 역할도 한다.
+즉 WS Engine은 한 주소를 읽고, 새 partial sum과 더한 뒤, 다시 같은 주소에 write-back한다.
+이 read-modify-write 흐름 때문에 BRAM read latency와 accumulator valid timing이 FSM 상태에 포함된다.
 
 ```verilog
 if (all_acc_valid_w && !first_k_tile_w) begin

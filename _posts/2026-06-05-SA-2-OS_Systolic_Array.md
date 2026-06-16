@@ -43,7 +43,7 @@ PE(row, col)
 ## PE
 
 ### PE가 하는 일
-![](assets/images/Pasted%20image%2020260606134247.png)
+![](/assets/images/Pasted%20image%2020260606134247.png)
 PE 하나는 매우 단순하다.
 
 1. 왼쪽에서 `act_i`를 받는다.
@@ -61,12 +61,16 @@ valid 신호도 데이터와 같은 방향으로 이동한다.
 `acc_clear_i`를 오른쪽으로 전달하는 이유는 각 행의 PE들이 같은 행 안에서 activation 흐름을 따라 순서대로 clear되어야 하기 때문이다.
 나중에 skewing을 적용하면 row마다 입력 시점이 달라지므로, clear 신호도 데이터 흐름과 맞춰 전파되어야 한다.
 
+FPGA 회로로 보면 PE는 multiplier, adder, accumulator register, 그리고 이웃 PE로 넘기는 pipeline register들의 묶음이다.
+`always_ff` 안에서 `act_o <= act_i`처럼 쓰는 것은 단순 변수 대입이 아니라, 다음 clock edge에 값이 한 칸 이동하는 register를 만든다는 뜻이다.
+따라서 PE를 2D로 많이 배치하면 같은 cycle에 많은 MAC이 동시에 일어나지만, 그만큼 DSP와 register resource도 함께 사용한다.
+
 ### 누산 조건
 
 PE는 매 cycle마다 무조건 MAC을 수행하지 않는다.
 activation과 weight가 모두 유효할 때만 누산해야 한다.
 
-```systemverilog
+```verilog
 if (act_valid_i && weight_valid_i) begin
   acc_o <= acc_o + $signed(act_i) * $signed(weight_i);
 end
@@ -75,7 +79,7 @@ end
 그리고 tile이 바뀌면 이전 tile의 부분합이 남아 있으면 안 된다.
 그래서 clear가 MAC보다 우선순위를 가진다.
 
-```systemverilog
+```verilog
 if (acc_clear_i) begin
   acc_o <= 0;
 end else if (act_valid_i && weight_valid_i) begin
@@ -103,7 +107,7 @@ end
 
 ### pe_os.sv
 
-```SystemVerilog
+```verilog
 module pe_os #(
     parameter int ACT_W    = 8,   // activation 비트폭
     parameter int WEIGHT_W = 8,   // weight 비트폭
@@ -167,7 +171,9 @@ PE 하나는 한 개의 `C[row][col]`만 계산한다.
 - `weight_i[col]`: 각 열의 위쪽 끝 PE로 입력, 아래로 전파
 - `acc_o[row][col]`: PE `(row, col)`이 담당하는 C tile의 부분합
 
-모든 PE가 동시에 연산을 수행하기 때문에, 16×16 배열에서 매 클락마다 256개의 MAC 연산이 병렬로 진행된다.
+모든 PE가 동시에 연산을 수행할 수 있기 때문에, 16×16 배열에서는 한 cycle에 최대 256개의 MAC 연산이 병렬로 진행된다.
+실제로 MAC이 일어나는지는 각 PE에 도착한 `act_valid`와 `weight_valid`가 결정한다.
+edge tile에서는 일부 row/column이 mask되어 일부 PE가 쉬게 된다.
 
 ```text
 act_i[0] -> PE(0,0) -> PE(0,1) -> ... -> PE(0,COLS-1)
@@ -195,7 +201,7 @@ weight_i[1] ↓ PE(0,1) ↓ PE(1,1) ↓ ... ↓ PE(ROWS-1,1)
 | `acc_o`          | output | ACC_W × ROWS × COLS | 출력 행렬 C의 부분합          |
 
 ### systolic_array_os_non_skew.sv
-```SystemVerilog
+```verilog
 module systolic_array_os_non_skew #(
     parameter int ROWS     = 16,
     parameter int COLS     = 16,
@@ -227,12 +233,12 @@ module systolic_array_os_non_skew #(
   generate
     for (i = 0; i < ROWS; i++) begin : g_input_act
       assign act_wire[i][0]       = act_i[i];
-      assign act_valid_wire[i][0] = act_valid_i;
+      assign act_valid_wire[i][0] = act_valid_i[i];
       assign acc_clear_wire[i][0] = acc_clear_i;
     end
     for (i = 0; i < COLS; i++) begin : g_input_weight
       assign weight_wire[0][i]       = weight_i[i];
-      assign weight_valid_wire[0][i] = weight_valid_i;
+      assign weight_valid_wire[0][i] = weight_valid_i[i];
     end
   endgenerate
 
