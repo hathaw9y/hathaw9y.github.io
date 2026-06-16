@@ -1,0 +1,3 @@
+[submodule "external/SimpleSystolicArray"]
+	path = external/SimpleSystolicArray
+	url = https://github.com/hathaw9y/SimpleSystolicArray.git

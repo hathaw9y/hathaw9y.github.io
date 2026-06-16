@@ -71,64 +71,137 @@ Weight read order:
   -> TB_{0,1} -> TB_{1,1}
 ```
 
+## OS Activation Memory Layout
+
+OS에서 Activation은 `m_tile`을 기준으로 저장하고, 각 `m_tile` 내부에서는 K 방향으로 주소가 증가한다.
+즉 같은 output row tile에서 필요한 Activation vector를 K 방향으로 연속 배치한다.
+
+이전 예시에서 Activation BRAM은 다음처럼 저장된다.
+
+![](/assets/images/Pasted%20image%2020260614171828.png)
+
+주소식은 다음과 같다.
+
+```text
+A_addr = act_base + m_tile_idx * K + k
+```
+
+## OS Weight Memory Layout
+
+OS에서 Weight는 `n_tile`을 기준으로 저장하고, 각 `n_tile` 내부에서는 K 방향으로 주소가 증가한다.
+즉 같은 output column tile에서 필요한 Weight vector를 K 방향으로 연속 배치한다.
+
+이전 예시에서 Weight BRAM은 다음처럼 저장된다.
+
+![](/assets/images/Pasted%20image%2020260614170712.png)
+
+주소식은 다음과 같다.
+
+```text
+B_addr = weight_base + n_tile * K + k
+```
+
 ## WS Tiling Order
 
 WS는 weight stationary, 즉 Weight를 기준으로 연산 순서가 정해진다.
-OS가 output tile을 하나씩 완성하는 방향이라면, WS는 한 번 로드한 weight tile을 최대한 재사용하는 방향으로 tile 순서를 잡는다.
+다만 여기서 구현하는 WS FSM은 OS처럼 `ROWS x COLS` output tile 전체를 한 번에 만들지 않고, 결과 일부분만 계산한다.
 
-예를 들어 $n\_tile = 0$에 해당하는 output column을 먼저 계산한다고 생각해보자.
-이 column을 만들 때 필요한 weight는 $TB_{0,0}$과 $TB_{1,0}$이다.
-이 두 weight tile은 $TC_{0,0}$과 $TC_{1,0}$을 계산할 때 모두 사용된다.
+이전 예시, `2 x 2` tile로 `4 x 4` matrix를 계산한다고 가정하자.
 
-따라서 WS에서는 다음처럼 같은 weight tile을 고정해두고, Activation의 row tile을 바꿔가며 읽는 방식이 자연스럽다.
+![](/assets/images/Pasted%20image%2020260614143423.png)
+
+우선 Result `N Tile 0` 부터 연산한다.
 
 ```text
-n_tile 0 계산:
-  TB_{0,0} load
-    TA_{0,0} -> TC_{0,0} partial
-    TA_{1,0} -> TC_{1,0} partial
+TB_{0,0} load
+  TA_{0,0} Compute -> TC_{0,0} partial
+  TA_{1,0} Compute -> TC_{1,0} partial
 
-  TB_{1,0} load
-    TA_{0,1} -> TC_{0,0} complete
-    TA_{1,1} -> TC_{1,0} complete
+TB_{1,0} load
+  TA_{0,1} Compute -> TC_{0,0} partial
+  TA_{1,1} Compute -> TC_{1,0} partial
 ```
 
-그 다음 $n\_tile = 1$도 같은 방식으로 계산한다.
+그 다음 Result `N Tile 1` 을 연산한다.
 
 ```text
-n_tile 1 계산:
-  TB_{0,1} load
-    TA_{0,0} -> TC_{0,1} partial
-    TA_{1,0} -> TC_{1,1} partial
+TB_{0,1} load
+  TA_{0,0} Compute -> TC_{0,1} partial
+  TA_{1,0} Compute -> TC_{1,1} partial
 
-  TB_{1,1} load
-    TA_{0,1} -> TC_{0,1} complete
-    TA_{1,1} -> TC_{1,1} complete
+TB_{1,1} load
+  TA_{0,1} Compute -> TC_{0,1} partial
+  TA_{1,1} Compute -> TC_{1,1} partial
 ```
 
-이를 output tile이 완성되는 순서로 보면 다음과 같다.
+이를 읽기 순서로 나열하면 다음과 같다.
 
 ```text
-TC_{0,0} -> TC_{1,0} -> TC_{0,1} -> TC_{1,1}
-```
+Activation read order:
+  TA_{0,0} -> TA_{0,1}
+  -> TA_{1,0} -> TA_{1,1}
+  -> TA_{0,0} -> TA_{0,1}
+  -> TA_{1,0} -> TA_{1,1}
 
-이를 실제 read order로 나열하면 다음과 같다.
-
-```text
 Weight read order:
   TB_{0,0}
   -> TB_{1,0}
   -> TB_{0,1}
   -> TB_{1,1}
-
-Activation read order:
-  TA_{0,0} -> TA_{1,0}
-  -> TA_{0,1} -> TA_{1,1}
-  -> TA_{0,0} -> TA_{1,0}
-  -> TA_{0,1} -> TA_{1,1}
 ```
 
-OS와 비교하면 차이가 분명하다.
-OS는 output 저장 순서를 기준으로 $TC_{0,0}$ → $TC_{0,1}$ → $TC_{1,0}$ → $TC_{1,1}$ 순서로 움직인다.
-반면 WS는 weight 재사용을 기준으로 $TC_{0,0}$ → $TC_{1,0}$ → $TC_{0,1}$ → $TC_{1,1}$ 순서로 움직인다.
+## WS Activation Memory Layout
 
+WS에서 Activation은 OS와 다르게 저장한다.
+OS는 `m_tile`을 기준으로 K 방향 주소가 증가했지만, WS는 `k_tile`을 기준으로 M 방향 주소가 증가한다.
+즉 같은 K tile에 대해 모든 output row의 activation vector를 연속해서 저장한다.
+
+이전 예시에서 Activation BRAM은 다음처럼 저장된다.
+
+![](/assets/images/Pasted%20image%2020260614164258.png)
+
+주소식은 다음과 같다.
+
+```text
+A_addr = act_base + (k_tile * M) + m_idx
+```
+
+`2 x 2` tile로 `4 x 4` matrix를 계산하면 `M = 4`, `k_tiles = 2`이다.
+따라서 Activation BRAM은 다음처럼 해석할 수 있다.
+
+```text
+k_tile 0:
+  address 0x00: A[row 0][k = 0:1]
+  address 0x01: A[row 1][k = 0:1]
+  address 0x02: A[row 2][k = 0:1]
+  address 0x03: A[row 3][k = 0:1]
+
+k_tile 1:
+  address 0x04: A[row 0][k = 2:3]
+  address 0x05: A[row 1][k = 2:3]
+  address 0x06: A[row 2][k = 2:3]
+  address 0x07: A[row 3][k = 2:3]
+```
+
+현재 WS FSM은 같은 `(m_idx, n_tile)`에 대해 K tile을 먼저 처리한다.
+따라서 `m_idx = 0`일 때 Activation read sequence는 다음처럼 된다.
+
+```text
+m_idx 0, n_tile 0: 0x00 -> 0x04
+m_idx 0, n_tile 1: 0x00 -> 0x04
+m_idx 1, n_tile 0: 0x01 -> 0x05
+m_idx 1, n_tile 1: 0x01 -> 0x05
+```
+
+## WS Weight Memory Layout
+
+Weight 메모리 레이아웃은 기존 OS Memory Layout과 동일하다.
+다만 차이점이라면 WS는 각 weight tile을 load 단계에서 PE 내부에 고정하기 위해 사용한다.
+
+![](/assets/images/Pasted%20image%2020260614170712.png)
+
+저장 주소식은 다음과 같다.
+
+```text
+B_addr = weight_base + n_tile * K + k
+```
